@@ -1,5 +1,5 @@
 /*
-*  Protected JS
+*  Masquerade JS
 *
 *  Author: Matthew Preskett
 *  Co-Author: Steve Davies
