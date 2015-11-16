@@ -5,7 +5,7 @@
     var Example = new Class({
         construct:
             function() {
-		this.count = 0;
+                this.count = 0;
                 this.string = 'example string';
             }
     });
@@ -23,7 +23,7 @@
     var Example = new Class({
         construct:
             function() {
-		this.count = 0;
+                this.count = 0;
                 this.string = 'example string';
             },
         getString:
@@ -41,15 +41,15 @@
     var Example = new Class({
         construct:
             function() {
-		this.count = 0;
+                this.count = 0;
                 this.string = 'example string';
             },
         getString:
             function() {
-		this._incrementCount();
+                this._incrementCount();
                 return this.string;
             },
-       	_incrementCount:
+        _incrementCount:
             function() {
                 this.count++;
             }
@@ -82,7 +82,7 @@
     var Extend = Example.extend({
         construct:
             function() {
-		this.count = 0;
+                this.count = 0;
                 this.string = 'extend string';
             }
     });
@@ -96,7 +96,7 @@
     var Extend = Example.extend({
         construct:
             function() {
-		this.count = 0;
+                this.count = 0;
                 this.string = 'extend string';
             },
         getStringCount:
