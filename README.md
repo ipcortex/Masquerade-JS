@@ -18,7 +18,7 @@
 
 ## Class public method
 
-**getString** will be available on instances of **Example** 
+**getString** will be available on instances of **Example**. 
 
     var Example = new Class({
         construct:
@@ -77,7 +77,7 @@
 
 ## Class extension
 
-**Extend** will inherit all methods from **Example**
+**Extend** will inherit all methods from **Example**.
 
     var Extend = Example.extend({
         construct:
