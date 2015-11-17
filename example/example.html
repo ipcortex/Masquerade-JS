@@ -1,0 +1,71 @@
+<html>
+<head>
+</head>
+<body>
+	<script src="masquerade.js"></script>
+	<script>
+		var Example = new Class({
+			classPublic:
+				{
+					string: 'class public'
+				},
+			$classStatic:
+				{
+					string: 'class static'
+				},
+			_classPrivate:
+				{
+					string: 'class private'
+				},
+			construct:
+				function() {
+					this.count = 0;
+					this.string = 'example string';
+				},
+			_incrementCount:
+				function() {
+					this.count++;
+				},
+			getClassPrivate:
+				function() {
+					return this._classPrivate.string;
+				},
+			getString:
+				function() {
+					this._incrementCount();
+					return this.string;
+				},
+			$getDate:
+				function() {
+					return (new Date()).getTime();
+				},
+			defineProperties:
+				{
+					string:
+						{
+							get:
+								function() {
+									return this.string;
+								}
+						}
+				}
+		});
+
+		var Extend = Example.extend({
+			construct:
+				function() {
+					this.count = 0;
+					this.string = 'extend string';
+				},
+			getStringCount:
+				function() {
+					return this.string + ' ' + this.count;
+				}
+		});
+
+		var example = new Example();
+
+		var extend = new Extend();
+	</script>
+</body>
+</html>
