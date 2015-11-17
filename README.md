@@ -243,7 +243,7 @@ Anything stored on **this** will be private to an instance.
 
     example.string; /* 'example string' */
 
-## The quirks of the wrapper.
+## Quirks
 
     var Example = new Class({
         construct:
