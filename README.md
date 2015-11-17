@@ -1,5 +1,7 @@
 # Masquerade JS
 
+Part of our (corporate) product is a Javascript API, we often hand copies of our (class) objects around and only want specific attributes exposed. Masquerade JS is a wrapper that attempts to correctly scope class methods and storage in OO Javascript. It allows you to expose only what you want to expose. There is a small caveat, if you pass references to the private **this** you will expose the entire object. If you want to stay protected only pass a reference to the public object provided to you on creation. The public object is briefly available within the constructor on **this.$public**, be careful of circular references if you use it.
+
 ## Class definition
 
     var Example = new Class({
@@ -18,7 +20,7 @@
 
 ## Class public method
 
-**getString** will be available on instances of **Example**. 
+**getString** will be publicly callable.
 
     var Example = new Class({
         construct:
@@ -32,11 +34,13 @@
             }
     });
 
-    (new Example()).getString() /* Returns 'example string' */
+    var example = new Example();
+
+    example.getString(); /* returns 'example string' */
 
 ## Class private method
 
-**_incrementCount** is only available from the **this** context.
+**_incrementCount** is only callable from the **this** context.
 
     var Example = new Class({
         construct:
@@ -55,11 +59,15 @@
             }
     });
 
-    (new Example()).getString() /* Returns 'example string' and increments this.count */
+    var example = new Example();
+
+    example._incrementCount(); /* undefined */
+
+    example.getString() /* returns 'example string' and increments this.count */
 
 ## Class static method
 
-**getDate** is available on the **Example** definition.
+**getDate** is copied by reference to the class definition.
 
     var Example = new Class({
         construct:
@@ -73,7 +81,7 @@
             }
     });
 
-    Example.getDate(); /* Returns epoch */
+    Example.getDate(); /* returns epoch */
 
 ## Class extension
 
@@ -87,7 +95,9 @@
             }
     });
 
-    (new Example()).getString() /* Returns 'extend string' and increments this.count */
+    var extend = new Extend();
+
+    extend.getString() /* returns 'extend string' and increments this.count */
 
 ## Method extension
 
@@ -105,13 +115,19 @@
             }
     });
 
-    (new Extend()).getString() /* Returns 'extend string *this.count' */
+    var example = new Example();
+
+    example.getStringCount(); /* undefined */
+
+    var extend = new Extend();
+
+    extend.getStringCount(); /* returns 'extend string *this.count' */
 
 # Storage
 
 ## Private storage
 
-Anything stored on **this** will be private to that instance.
+Anything stored on **this** will be private to an instance.
 
     var Example = new Class({
         construct:
@@ -121,9 +137,13 @@ Anything stored on **this** will be private to that instance.
             }
     });
 
+    var example = new Example();
+
+    example.count; /* undefined */
+
 ## Class public storage
 
-**classPublic** is avaiable on both the **Example** definition and instances of **Example** and **Extend**, assuming **Extend** has been extended from **Example**.
+**classPublic** is copied by reference to the class definition and class instances. 
 
     var Example = new Class({
         classPublic:
@@ -137,10 +157,15 @@ Anything stored on **this** will be private to that instance.
             }
     });
 
+    var example = new Example();
+
+    example.classPublic.string; /* 'class public' */
+
+    Example.classPublic.string; /* 'class public' */
 
 ## Class static storage
 
-**classStatic** is avaiable on the **Example** definition.
+**classStatic** is copied by reference to the class definition.
 
     var Example = new Class({
         $classStatic:
@@ -154,9 +179,15 @@ Anything stored on **this** will be private to that instance.
             }
     });
 
+    var example = new Example();
+
+    example.classStatic.string; /* undefined */
+
+    Example.classStatic.string; /* 'class static' */
+
 ## Class private storage
 
-**_classPrivate** is available to all instances of **Example** and **Extend**, assuming **Extend** has been extended from **Example**.
+**_classPrivate** is copied by reference to class instances.
 
     var Example = new Class({
         _classPrivate:
@@ -168,11 +199,27 @@ Anything stored on **this** will be private to that instance.
                 this.count = 0;
                 this.string = 'example string';
             }
+        getClassPrivate:
+            function() {
+                return this._classPrivate.string;
+            }
     });
+
+    var example = new Example();
+
+    var extend = new Extend();
+
+    example.classPublic.string; /* undefined */
+
+    Example.classPublic.string; /* undefined */
+
+    example.getClassPrivate(); /* returns 'class private' */
+
+    extend.getClassPrivate(); /* returns 'class private' */ 
 
 # Properties
 
-**string** is defined on any instance of **Example**.
+**string** becomes a property on class instances.
 
     var Example = new Class({
         construct:
@@ -192,4 +239,30 @@ Anything stored on **this** will be private to that instance.
             }
     });
 
-    (new Example()).string; /* Outputs 'example string' */
+    var example = new Example();
+
+    example.string; /* 'example string' */
+
+## The quirks of the wrapper.
+
+    var Example = new Class({
+        construct:
+            function() {
+                this.count = 0;
+                this.string = 'example string';
+            },
+        getThis:
+            function() {
+                return this;
+            }
+    });
+
+    var example = new Example();
+
+    var privateExample = example.getThis();
+
+    example === privateExample /* false */
+
+    example instanceof Example /* true */
+
+    privateExample instanceof Example /* true */
