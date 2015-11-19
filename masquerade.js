@@ -1,5 +1,7 @@
 /*
 *  Masquerade JS
+*  
+*  IP Cortex Ltd
 *
 *  Author: Matthew Preskett
 *  Co-Author: Steve Davies
