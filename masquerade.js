@@ -5,6 +5,8 @@
 *
 *  Author: Matthew Preskett
 *  Co-Author: Steve Davies
+*
+*  https://github.com/ipcortex/Masquerade-JS
 */
 
 (function() {
