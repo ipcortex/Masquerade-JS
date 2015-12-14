@@ -2,6 +2,8 @@
 
 Part of our (corporate) product is a Javascript API, we often hand copies of our (class) objects around and only want specific attributes exposed. Masquerade JS is a wrapper that attempts to correctly scope class methods and storage in OO Javascript. It allows you to expose only what you want to expose. There is a small caveat, if you pass references to the private **this** you will expose the entire object. If you want to stay protected only pass a reference to the public object provided to you on creation. The public object is briefly made available within the constructor on **this.$public**, be careful of circular references if you use it.
 
+This adds class functionality to ES5, similar but not identical to ES6. However it adds private scoping to fields and methods which is not available in ES5 or ES6.
+
 ## Class definition
 
     var Example = new Class({
