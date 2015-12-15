@@ -1,11 +1,12 @@
 # Masquerade JS
 
-Part of our (corporate) product is a Javascript API, we often hand copies of our (class) objects around and only want specific attributes exposed. Masquerade JS is a wrapper that attempts to correctly scope class methods and storage in OO Javascript. It allows you to expose only what you want to expose. There is a small caveat, if you pass references to the private **this** you will expose the entire object. If you want to stay protected only pass a reference to the public object provided to you on creation. The public object is briefly made available within the constructor on **this.$public**, be careful of circular references if you use it.
+Part of our (corporate) product is a Javascript API, we often hand copies of our (class) objects around and only want specific attributes exposed. Masquerade JS is a wrapper that attempts to correctly scope class methods and storage in OO Javascript. It allows you to expose only what you want to expose. There is a small caveat, if you pass references to the private `this` you will expose the entire object. If you want to stay protected only pass a reference to the public object provided to you on creation. The public object is briefly made available within the constructor on `this.$public`, be careful of circular references if you use it.
 
 This adds class functionality to ES5, similar but not identical to ES6. However it adds private scoping to fields and methods which is not available in ES5 or ES6.
 
 ## Class definition
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -13,17 +14,21 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
                 this.string = 'example string';
             }
     });
+```
 
 ## New object
 
+```javascript
     var example = new Example();
+```
 
 # Methods
 
 ## Class public method
 
-**getString** will be publicly callable.
+`getString` will be publicly callable.
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -39,11 +44,13 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
     var example = new Example();
 
     example.getString(); /* returns 'example string' */
+```
 
 ## Class private method
 
-**_incrementCount** is only callable from the **this** context.
+`_incrementCount` is only callable from the `this` context.
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -66,11 +73,13 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
     example._incrementCount(); /* undefined */
 
     example.getString() /* returns 'example string' and increments this.count */
+```
 
 ## Class static method
 
-**getDate** is copied by reference to the class definition.
+`getDate` is copied by reference to the class definition.
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -84,11 +93,13 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
     });
 
     Example.getDate(); /* returns epoch */
+```
 
 ## Class extension
 
-**Extend** will inherit all methods from **Example**.
+`Extend` will inherit all methods from `Example`.
 
+```javascript
     var Extend = Example.extend({
         construct:
             function() {
@@ -100,11 +111,13 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
     var extend = new Extend();
 
     extend.getString() /* returns 'extend string' and increments this.count */
+```
 
 ## Method extension
 
-**getStringCount** will only be available on instances of **Extend**.
+`getStringCount` will only be available on instances of `Extend`.
 
+```javascript
     var Extend = Example.extend({
         construct:
             function() {
@@ -124,13 +137,15 @@ This adds class functionality to ES5, similar but not identical to ES6. However 
     var extend = new Extend();
 
     extend.getStringCount(); /* returns 'extend string *this.count' */
+```
 
 # Storage
 
 ## Private storage
 
-Anything stored on **this** will be private to an instance.
+Anything stored on `this` will be private to an instance.
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -142,11 +157,13 @@ Anything stored on **this** will be private to an instance.
     var example = new Example();
 
     example.count; /* undefined */
+```
 
 ## Class public storage
 
-**classPublic** is copied by reference to the class definition and class instances. 
+`classPublic` is copied by reference to the class definition and class instances. 
 
+```javascript
     var Example = new Class({
         classPublic:
             {
@@ -164,11 +181,13 @@ Anything stored on **this** will be private to an instance.
     example.classPublic.string; /* 'class public' */
 
     Example.classPublic.string; /* 'class public' */
+```
 
 ## Class static storage
 
-**classStatic** is copied by reference to the class definition.
+`classStatic` is copied by reference to the class definition.
 
+```javascript
     var Example = new Class({
         $classStatic:
             {
@@ -186,11 +205,13 @@ Anything stored on **this** will be private to an instance.
     example.classStatic.string; /* undefined */
 
     Example.classStatic.string; /* 'class static' */
+```
 
 ## Class private storage
 
-**_classPrivate** is copied by reference to class instances.
+`_classPrivate` is copied by reference to class instances.
 
+```javascript
     var Example = new Class({
         _classPrivate:
             {
@@ -218,11 +239,13 @@ Anything stored on **this** will be private to an instance.
     example.getClassPrivate(); /* returns 'class private' */
 
     extend.getClassPrivate(); /* returns 'class private' */ 
+```
 
 # Properties
 
-**string** becomes a property on class instances.
+`string` becomes a property on class instances.
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -244,9 +267,11 @@ Anything stored on **this** will be private to an instance.
     var example = new Example();
 
     example.string; /* 'example string' */
+```
 
 ## Quirks
 
+```javascript
     var Example = new Class({
         construct:
             function() {
@@ -268,3 +293,4 @@ Anything stored on **this** will be private to an instance.
     example instanceof Example /* true */
 
     privateExample instanceof Example /* true */
+```
