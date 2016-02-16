@@ -66,6 +66,7 @@
 			} else if ( typeof(definition[property]) !== 'function' ) {
 				Inner.__shared_storage[property] = definition[property];
 				var getNset = {
+					/*jslint evil: true */
 					get:	new Function('return this.__shared_storage["' + property + '"];').bind(Inner),
 					set:	new Function('v', 'this.__shared_storage["' + property + '"] = v;').bind(Inner)
 				};
