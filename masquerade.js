@@ -11,8 +11,6 @@
 
 (function() {
 	Class = function(definition) { 
-		var Inner = null;
-
 		var Construct = function Class() {
 			var object = Object.create(Inner);
 			for ( var property in definition ) {
@@ -52,7 +50,7 @@
 		};
 
 		/* Construct Inner from Construct so 'instanceof' works */
-		Inner = Object.create(Construct.prototype);
+		var Inner = Object.create(Construct.prototype);
 
 		Inner.__shared_storage = {};
 		for ( var property in definition ) {
