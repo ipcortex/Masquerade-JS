@@ -296,13 +296,13 @@ The `this` referred to inside class functions is not the same as the constructed
     privateExample instanceof Example /* true */
 ```
 
-Class data storage will copy by reference during a Class.extend() if it is an object, but not if it is a scalar.
+Class data storage will copy by reference during a `Class.extend()` if it is an object, but not if it is a scalar.
 ```javascript
     var Example = new Class({
         scalar: '1234',
         obj: {
             value: 1234
-        }
+        },
         obj2: {
             value: 5678
         }
@@ -316,8 +316,8 @@ Class data storage will copy by reference during a Class.extend() if it is an ob
     example.scalar === '1234'     /* true */
 
     sub.obj.value = 0;            /* Updates by-reference */
-    example.obj.value === 0       /* true */
+    example.obj.value === 0;       /* true */
 
     sub.obj2 = 'replace';         /* Replace by-reference copy */
-    example.obj2.value;           /* `{obj2: { value: 5678 } }` */
+    example.obj2;                 /* `{value: 5678}` */
 
