@@ -51,8 +51,7 @@
 
 		/* Construct Inner from Construct so 'instanceof' works */
 		var Inner = Object.create(Construct.prototype);
-
-		Inner.__shared_storage = {};
+		var sharedStorage = {};
 		for ( var property in definition ) {
 			if ( ! definition.hasOwnProperty(property) )
 				continue;
@@ -64,11 +63,10 @@
 						Inner['_property_' + define + '_' + operator] = definition[property][define][operator];
 				}
 			} else if ( typeof(definition[property]) !== 'function' ) {
-				Inner.__shared_storage[property] = definition[property];
+				sharedStorage[property] = definition[property];
 				var getNset = {
-					/*jslint evil: true */
-					get:	new Function('return this.__shared_storage["' + property + '"];').bind(Inner),
-					set:	new Function('v', 'this.__shared_storage["' + property + '"] = v;').bind(Inner)
+					get:	new Function('return this["' + property + '"];').bind(sharedStorage),
+					set:	new Function('v', 'this["' + property + '"] = v;').bind(sharedStorage)
 				};
 				if ( property.substr(0, 1) !== '_' ) {
 					Object.defineProperty(Construct.prototype, property, getNset);
@@ -80,7 +78,6 @@
 		}
 
 		Construct._isClass = true;
-
 		return Construct;
 	};
 
