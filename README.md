@@ -271,6 +271,7 @@ Anything stored on `this` will be private to an instance.
 
 ## Quirks
 
+The `this` referred to inside class functions is not the same as the constructed class object, but is an instance of the same class.
 ```javascript
     var Example = new Class({
         construct:
@@ -294,3 +295,29 @@ Anything stored on `this` will be private to an instance.
 
     privateExample instanceof Example /* true */
 ```
+
+Class data storage will copy by reference during a `Class.extend()` if it is an object, but not if it is a scalar.
+```javascript
+    var Example = new Class({
+        scalar: '1234',
+        obj: {
+            value: 1234
+        },
+        obj2: {
+            value: 5678
+        }
+    });
+    var subClass = Example.extend({});
+
+    var example = new Example();
+    var sub = new subClass();
+
+    sub.scalar = 'abcd';          /* Updates only the subclass */
+    example.scalar === '1234'     /* true */
+
+    sub.obj.value = 0;            /* Updates by-reference */
+    example.obj.value === 0;       /* true */
+
+    sub.obj2 = 'replace';         /* Replace by-reference copy */
+    example.obj2;                 /* `{value: 5678}` */
+
