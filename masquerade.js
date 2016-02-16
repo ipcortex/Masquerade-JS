@@ -16,12 +16,12 @@
 		var Construct = function Class() {
 			var object = Object.create(Inner);
 			for ( var property in definition ) {
-				if ( property == 'construct' )
+				if ( property === 'construct' )
 					continue;
-				if ( property.substr(0, 1) == '_' || property.substr(0, 1) == '$' )
+				if ( property.substr(0, 1) === '_' || property.substr(0, 1) === '$' )
 					continue;
-				if ( typeof(definition[property]) == 'object' ) {
-					if ( property == 'defineProperties' ) {
+				if ( typeof(definition[property]) === 'object' ) {
+					if ( property === 'defineProperties' ) {
 						var properties = {};
 						for ( var define in definition[property] ) {
 							properties[define] = properties[define] || {};
@@ -31,10 +31,10 @@
 						Object.defineProperties(this, properties);
 					} else
 						this[property] = definition[property];
-				} else if ( typeof(object[property]) == 'function' )
+				} else if ( typeof(object[property]) === 'function' )
 					this[property] = object[property].bind(object);
 			}
-			if ( typeof(definition.construct) == 'function' ) {
+			if ( typeof(definition.construct) === 'function' ) {
 				object.$public = this;
 				definition.construct.apply(object, arguments);
 				delete object.$public;
@@ -43,7 +43,7 @@
 
 		Construct.extend = function(extension) {
 			for ( var property in definition ) {
-				if ( property == 'defineProperties' )
+				if ( property === 'defineProperties' )
 					continue;
 				if ( definition.hasOwnProperty(property) && ! extension.hasOwnProperty(property))
 					extension[property] = definition[property];
@@ -51,25 +51,33 @@
 			return new Class(extension);
 		};
 
+		/* Construct Inner from Construct so 'instanceof' works */
 		Inner = Object.create(Construct.prototype);
 
+		Inner.__shared_storage = {};
 		for ( var property in definition ) {
 			if ( ! definition.hasOwnProperty(property) )
 				continue;
-			if ( property.substr(0, 1) == '$' ) {
+			if ( property.substr(0, 1) === '$' )
 				Construct[property.substr(1)] = definition[property];
-				continue;
-			}
-			if ( property == 'defineProperties' ) {
+			else if ( property === 'defineProperties' ) {
 				for ( var define in definition[property] ) {
 					for ( var operator in definition[property][define] )
 						Inner['_property_' + define + '_' + operator] = definition[property][define][operator];
 				}
-				continue;
-			} 
-			if ( typeof(definition[property]) == 'object' && property.substr(0, 1) != '_' )
-				Construct[property] = definition[property];
-			Inner[property] = definition[property];
+			} else if ( typeof(definition[property]) !== 'function' ) {
+				Inner.__shared_storage[property] = definition[property];
+				var getNset = {
+					get:	new Function('return this.__shared_storage["' + property + '"];').bind(Inner),
+					set:	new Function('v', 'this.__shared_storage["' + property + '"] = v;').bind(Inner)
+				};
+				if ( property.substr(0, 1) !== '_' ) {
+					Object.defineProperty(Construct.prototype, property, getNset);
+					Object.defineProperty(Construct, property, getNset);
+				} else
+					Object.defineProperty(Inner, property, getNset);
+			} else	/* type == 'function' */
+				Inner[property] = definition[property];
 		}
 
 		Construct._isClass = true;
