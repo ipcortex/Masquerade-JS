@@ -63,10 +63,10 @@
 						Inner['_property_' + define + '_' + operator] = definition[property][define][operator];
 				}
 			} else if ( typeof(definition[property]) !== 'function' ) {
-				sharedStorage[property] = definition[property];
+				sharedStorage[property] = {value: definition[property]};
 				var getNset = {
-					get:	new Function('return this["' + property + '"];').bind(sharedStorage),
-					set:	new Function('v', 'this["' + property + '"] = v;').bind(sharedStorage)
+					get:	function() { return this.value; }.bind(sharedStorage[property]),
+					set:	function(v) { this.value = v; }.bind(sharedStorage[property])
 				};
 				if ( property.substr(0, 1) !== '_' ) {
 					Object.defineProperty(Construct.prototype, property, getNset);
