@@ -51,7 +51,6 @@
 
 		/* Construct Inner from Construct so 'instanceof' works */
 		var Inner = Object.create(Construct.prototype);
-		var sharedStorage = {};
 		for ( var property in definition ) {
 			if ( ! definition.hasOwnProperty(property) )
 				continue;
@@ -63,10 +62,10 @@
 						Inner['_property_' + define + '_' + operator] = definition[property][define][operator];
 				}
 			} else if ( typeof(definition[property]) !== 'function' ) {
-				sharedStorage[property] = {value: definition[property]};
+				var sharedStorage = {value: definition[property]};
 				var getNset = {
-					get:	function() { return this.value; }.bind(sharedStorage[property]),
-					set:	function(v) { this.value = v; }.bind(sharedStorage[property])
+					get:	function() { return this.value; }.bind(sharedStorage),
+					set:	function(v) { this.value = v; }.bind(sharedStorage)
 				};
 				if ( property.substr(0, 1) !== '_' ) {
 					Object.defineProperty(Construct.prototype, property, getNset);
