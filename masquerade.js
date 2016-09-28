@@ -30,7 +30,11 @@
 					} else
 						this[property] = definition[property];
 				} else if ( typeof(object[property]) === 'function' )
-					this[property] = object[property].bind(object);
+					Object.defineProperty(this, property, {
+						value: object[property].bind(object),
+						enumerable: false,
+						writable: false
+					});
 			}
 			if ( typeof(definition.construct) === 'function' ) {
 				object.$public = this;
