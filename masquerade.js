@@ -23,14 +23,22 @@
 						var properties = {};
 						for ( var define in definition[property] ) {
 							properties[define] = properties[define] || {};
-							for ( var operator in definition[property][define] )
-								properties[define][operator] = object['_property_' + define + '_' + operator].bind(object);
+							for ( var operator in definition[property][define] ) {
+								if ( operator === 'get' || operator === 'set' )
+									properties[define][operator] = object['_property_' + define + '_' + operator].bind(object);
+								else
+									properties[define][operator] = definition[property][define][operator];
+							}
 						}
 						Object.defineProperties(this, properties);
 					} else
 						this[property] = definition[property];
 				} else if ( typeof(object[property]) === 'function' )
-					this[property] = object[property].bind(object);
+					Object.defineProperty(this, property, {
+						value: object[property].bind(object),
+						enumerable: false,
+						writable: false
+					});
 			}
 			if ( typeof(definition.construct) === 'function' ) {
 				object.$public = this;
